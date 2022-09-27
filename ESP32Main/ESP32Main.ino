@@ -151,7 +151,7 @@ void ControlMotorSpin(int resolution , double velocity , short spinDirection , i
 
 int getResolution(void)
 {
-  return(1);
+  return(1); //TO-DO: tuvo que comentarse por fallos en la comunicacion
 }
 
 /*///////////////////////////////////////////////////////
@@ -164,7 +164,7 @@ int getResolution(void)
 
 double getSpeed(void)
 {
-  return(1.0);
+  return(1.0); //TO-DO: tuvo que comentarse por fallos en la comunicacion
 }
 
 /*///////////////////////////////////////////////////////
@@ -177,7 +177,14 @@ double getSpeed(void)
 
 short getDirection(void)
 {
-  return(1);
+  server.on("/ClockWise", []()
+  {
+      return(1);
+  });
+  server.on("/CounterClockWise", []()
+  {
+      return(0);
+  });
 }
 
 /*///////////////////////////////////////////////////////
@@ -190,5 +197,5 @@ short getDirection(void)
 
 int getSampleTime(void)
 {
-  return(1);
+  return(1); //TO-DO: tuvo que comentarse por fallos en la comunicacion
 }
