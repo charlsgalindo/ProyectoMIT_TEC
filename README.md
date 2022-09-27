@@ -10,5 +10,5 @@ Drivers:  L298N DC Motor Driver
 IOT Interface: MIT Appinventor WebSockets
 
 USO DE STACK/EEPROM:
-El Sketch usa 324614 bytes (24%) del espacio de almacenamiento de programa. El máximo es 1310720 bytes.
-Las variables Globales usan 15192 bytes (4%) de la memoria dinámica, dejando 312488 bytes para las variables locales. El máximo es 327680 bytes.
+El Sketch usa 324614 bytes (57%) del espacio de almacenamiento de programa. El máximo es 1310720 bytes.
+Las variables Globales usan 15192 bytes (14%) de la memoria dinámica, dejando 312488 bytes para las variables locales. El máximo es 327680 bytes.
