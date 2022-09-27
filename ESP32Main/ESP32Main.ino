@@ -68,12 +68,36 @@ void setup()
 {
   motor.setSpeed(60); 
   //Velocidad inicial, redefinida en runtime
+  
   Serial.begin(115200);
   //Comunicacion con puerto serial COM4
+  
+  webpage = "<h1>ESP32 Web Server</h1><p>GetDirection<a href=\"ClockWise\"><button>ON</button></a>&nbsp;<a href=\"CounterClockWise\"><button>OFF</button></a></p>";
+  // TO-DO: webpage += Agregando valores tipo doble, int (arquitectura de 32bit) y short
+
+  WiFi.begin(ssid, password);
+  //Inicializamos la conexion por WiFi
+
+  WiFi.begin(ssid, password);
+  Serial.println("");
+  while (WiFi.status() != WL_CONNECTED)
+    {
+    delay(500);
+    Serial.print(".");
+    }//Mostramos que la conexion esta en proceso. 
+   Serial.print("IP address: ");
+   Serial.println(WiFi.localIP());
+   //Imprimimos la IP a la que nos conectamos
+   if (mdns.begin("esp")) 
+   {
+    Serial.println("MDNS responder started");
+   }
+   //Confirmamos la conexion DNS
 }
 
 void loop() 
 {
+  server.handleClient();
   motorResolution = getResolution();
   Velocidad = getSpeed();
   direccionDeGiro = getDirection();
