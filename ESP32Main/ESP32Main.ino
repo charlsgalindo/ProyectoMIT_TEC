@@ -1,3 +1,7 @@
+//Integracion proyecto MIT:
+//Meta: Control de NEMA17 con ESP32 desde AppInventor
+//Carlos Galindo A01381750
+
 #include <Stepper.h>
 
 void setup() {
