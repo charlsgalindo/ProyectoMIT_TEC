@@ -4,6 +4,11 @@
 
 #include <Stepper.h>
 //Librería para control de steppers
+#include <WiFi.h>
+#include <WiFiClient.h>
+#include <WebServer.h>
+#include <ESPmDNS.h>
+//Librerías para establecer conexion con appinventor
 #define IN1 14
 #define IN2 27
 #define IN3 26
@@ -35,33 +40,37 @@ Stepper motor(motorResolution, IN1, IN2, IN3, IN4);
 //////////////////////////// Prototipos ////////////////////////////////
 
 void ControlClockWiseSpin(int, double, short, int);
-//Prototipo de funcion para giro 
+//Prototipo de funcion para giro
+ 
+int getResolution(void);
+double getSpeed(void);
+short getDirection(void);
+int getSampleTime(void);
+//Prototipos de funciones GET para parametros de giro
 
-/////////////////////////// COMIENZO DE RUNTIME //////////////////////////
+
+/////////////////////////// COMIENZO DE RUNTIME ////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////
 
 void setup()
 {
   motor.setSpeed(60); 
   //Velocidad inicial, redefinida en runtime
-  
   Serial.begin(115200);
   //Comunicacion con puerto serial COM4
 }
 
 void loop() 
 {
-  
-  Serial.println("Rotating Clockwise...");
-  motor.step(motorResolution);
-  delay(500);
-
-  Serial.println("Rotating Anti-clockwise...");
-  motor.step(-motorResolution);
-  delay(500);
-  
+  motorResolution = getResolution();
+  Velocidad = getSpeed();
+  direccionDeGiro = getDirection();
+  tiempoDeMuestreo = getSampleTime();
+  ControlMotorSpin(motorResolution,Velocidad,direccionDeGiro,tiempoDeMuestreo);
 }
 
-/////////////////////FIN DE RUNTIME //////////////////////
+/////////////////////FIN DE RUNTIME /////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
 /*/////////////////////////////////////////////////////////
@@ -94,4 +103,56 @@ void ControlMotorSpin(int resolution , double velocity , short spinDirection , i
    motor.setSpeed(0); 
    motor.step(0);
   }
+}
+
+/*///////////////////////////////////////////////////////
+ * Nombre: getResolution()
+ * 
+ * Descripcion: Obtiene la Resolucion (Grados/Step) del WebSocket del MIT App Inventor
+ * 
+ * Argumentos: Retorna un valor tipo int
+ *//////////////////////////////////////////////////////
+
+int getResolution(void)
+{
+  return(1);
+}
+
+/*///////////////////////////////////////////////////////
+ * Nombre: getSpeed()
+ * 
+ * Descripcion: Obtiene la velocidad de giro del WebSocket del MIT App Inventor
+ * 
+ * Argumentos: Retorna un valor tipo double
+ *//////////////////////////////////////////////////////
+
+double getSpeed(void)
+{
+  return(1.0);
+}
+
+/*///////////////////////////////////////////////////////
+ * Nombre: getDirection()
+ * 
+ * Descripcion: Obtiene la direccion de giro (CW/CCW) del WebSocket del MIT App Inventor
+ * 
+ * Argumentos: Retorna un valor tipo short
+ *//////////////////////////////////////////////////////
+
+short getDirection(void)
+{
+  return(1);
+}
+
+/*///////////////////////////////////////////////////////
+ * Nombre: getSampleTime()
+ * 
+ * Descripcion: Obtiene el tiempo de muestreo en mS del WebSocket del MIT App Inventor
+ * 
+ * Argumentos: Retorna un valor tipo int
+ *//////////////////////////////////////////////////////
+
+int getSampleTime(void)
+{
+  return(1);
 }
