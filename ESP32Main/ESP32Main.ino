@@ -17,6 +17,18 @@
 
 ///////////////////////////////Variables////////////////////////////////
 
+MDNSResponder mdns;
+//Objeto de tipo DNS Responder para conexion por WebSockets
+
+WebServer server(80);
+String webpage = "";
+//Objeto de tipo WebServer para establecimiento de conexion con servidor WIFI
+//y declaracion de variable tipo string que contiene la direccion de la pagina
+
+const char* ssid = "REPLACE_WITH_YOUR_SSID";
+const char* password = "REPLACE_WITH_YOUR_PASSWORD";
+//Credenciales Wifi, declaradas como apuntador y accedidas como paso por referencia
+
 int motorResolution = 1; 
 //Elegimos la presicion del motor, coordinar con equipo de CONTROL
 //para obtener el tiempo de muestreo y los grados por step del motor.
