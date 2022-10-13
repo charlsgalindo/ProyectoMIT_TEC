@@ -9,11 +9,20 @@
 #include <WebServer.h>
 #include <ESPmDNS.h>
 //Librerías para establecer conexion con appinventor
+
 #define IN1 14
-#define IN2 27
-#define IN3 26
-#define IN4 25
-//Puertos de salida para ESP32
+#define IN2 15
+#define IN3 16
+#define IN4 17 //Motor 1 (Roller)
+
+#define M2IN1 18
+#define M2IN2 19
+#define M2IN3 20
+#define M2IN4 21 //Motor 2 (Extruder)
+
+#define HeatSensor 10
+#define WidthSensor 11
+#define HotEnd 12
 
 ///////////////////////////////Variables////////////////////////////////
 
@@ -31,9 +40,26 @@ int tiempoDeMuestreo = 100;
 //Variable para aplicacion de PID. Tiempo de muestreo en MiliSegundos 
 //entre cada ciclo de operacion del motor
 
+// setting PWM properties
+const int freq = 5000;
+const int ledChannel = 0;
+const int resolution = 8;
+
+//////////////////////SET Functions //////////////////////////////////
+int dutyCycle()
+{
+  return 120; //Hardcoded, will be fully populated when Websockets are implemented
+}
+
+int sampleTime()
+{
+  return 500; ////Hardcoded, will be fully populated when Websockets are implemented
+}
+
 ///////////////////////////// Objetos //////////////////////////////////
 
-Stepper motor(motorResolution, IN1, IN2, IN3, IN4);
+Stepper roller(motorResolution, IN1, IN2, IN3, IN4);
+Stepper extruder(motorResolution, M2IN1, M2IN2, M2IN3, M2IN4);
 //Objeto de tipo "Stepper", instanciado con nuestros parametros de 
 //resolucion (Grados/Paso), y puertos de salida
 
@@ -54,19 +80,19 @@ int getSampleTime(void);
 
 void setup()
 {
-  motor.setSpeed(60); 
-  //Velocidad inicial, redefinida en runtime
   Serial.begin(115200);
   //Comunicacion con puerto serial COM4
+   ledcSetup(ledChannel, freq, resolution); //pwm output
+   ledcAttachPin(HotEnd, ledChannel);
 }
 
 void loop() 
 {
-  motorResolution = getResolution();
-  Velocidad = getSpeed();
-  direccionDeGiro = getDirection();
-  tiempoDeMuestreo = getSampleTime();
-  ControlMotorSpin(motorResolution,Velocidad,direccionDeGiro,tiempoDeMuestreo);
+  analogRead(HeatSensor);
+  analogRead(WidthSensor);
+  ledcWrite(ledChannel,dutyCycle());
+  ControlRollerSpin(motorResolution,Velocidad,direccionDeGiro,tiempoDeMuestreo);
+  ControlExtruderSpin(motorResolution,Velocidad,direccionDeGiro,tiempoDeMuestreo);
 }
 
 /////////////////////FIN DE RUNTIME /////////////////////////////////////////////////////////////////
@@ -85,74 +111,42 @@ void loop()
  *    cuarto int -> Tiempo de muestreo (Duracion de cada ciclo, preferiblemente no moverlo en runtime)
  * 
  *////////////////////////////////////////////////////////////
-void ControlMotorSpin(int resolution , double velocity , short spinDirection , int sampleTime)
+void ControlRollerSpin(int resolution , double velocity , short spinDirection , int sampleTime)
 {
-  motor.setSpeed(velocity); 
+  roller.setSpeed(velocity); 
   if(spinDirection == 1)  //Giro a favor de reloj
   {
-   motor.step(resolution);
+   roller.step(resolution);
    delay(sampleTime);  
   } 
   else if(spinDirection == 0) //Giro Contrarreloj
   { 
-   motor.step(-resolution);
+   roller.step(-resolution);
    delay(sampleTime);  
   }
   else //Manejador de Errores 
   {
-   motor.setSpeed(0); 
-   motor.step(0);
+   roller.setSpeed(0); 
+   roller.step(0);
   }
 }
 
-/*///////////////////////////////////////////////////////
- * Nombre: getResolution()
- * 
- * Descripcion: Obtiene la Resolucion (Grados/Step) del WebSocket del MIT App Inventor
- * 
- * Argumentos: Retorna un valor tipo int
- *//////////////////////////////////////////////////////
-
-int getResolution(void)
+void ControlExtruderSpin(int resolution , double velocity , short spinDirection , int sampleTime)
 {
-  return(1);
-}
-
-/*///////////////////////////////////////////////////////
- * Nombre: getSpeed()
- * 
- * Descripcion: Obtiene la velocidad de giro del WebSocket del MIT App Inventor
- * 
- * Argumentos: Retorna un valor tipo double
- *//////////////////////////////////////////////////////
-
-double getSpeed(void)
-{
-  return(1.0);
-}
-
-/*///////////////////////////////////////////////////////
- * Nombre: getDirection()
- * 
- * Descripcion: Obtiene la direccion de giro (CW/CCW) del WebSocket del MIT App Inventor
- * 
- * Argumentos: Retorna un valor tipo short
- *//////////////////////////////////////////////////////
-
-short getDirection(void)
-{
-  return(1);
-}
-
-/*///////////////////////////////////////////////////////
- * Nombre: getSampleTime()
- * 
- * Descripcion: Obtiene el tiempo de muestreo en mS del WebSocket del MIT App Inventor
- * 
- * Argumentos: Retorna un valor tipo int
- *//////////////////////////////////////////////////////
-
-int getSampleTime(void)
-{
-  return(1);
+  extruder.setSpeed(velocity); 
+  if(spinDirection == 1)  //Giro a favor de reloj
+  {
+   extruder.step(resolution);
+   delay(sampleTime);  
+  } 
+  else if(spinDirection == 0) //Giro Contrarreloj
+  { 
+   extruder.step(-resolution);
+   delay(sampleTime);  
+  }
+  else //Manejador de Errores 
+  {
+   extruder.setSpeed(0); 
+   extruder.step(0);
+  }
 }
